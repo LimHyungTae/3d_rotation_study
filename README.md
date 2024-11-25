@@ -22,10 +22,10 @@ R: [
 
 When I generated a rotation matrix using the outputs of the library:
 
-![a](/img/rotation_eigen_xyz.png)
+![a](materials/rotation_eigen_xyz.png)
 
-![b](/img/rotation_eigen_zyx.png)
+![b](materials/rotation_eigen_zyx.png)
 
-![c](/img/rotation_ours_zyx.png)
+![c](materials/rotation_ours_zyx.png)
 
 **Eigen** has larger numerical error! (0.0000025 vs 0.0000002)
