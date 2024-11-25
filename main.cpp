@@ -1,6 +1,7 @@
 #include <gtsam/geometry/Pose3.h>
 #include <gtsam/geometry/Rot3.h>
 #include <Eigen/Dense>
+#include <opencv2/opencv.hpp>
 #include <iostream>
 
 
@@ -18,6 +19,24 @@ void getRPYFromEigenMatrix3d(const Eigen::Matrix3d& mat, double& roll, double& p
   } 
 }
 
+void mat2rpy(const Eigen::Matrix3d& eigen_mat, double& roll, double& pitch, double& yaw) {
+  // Convert Eigen::Matrix3d to cv::Mat
+  cv::Mat cv_mat(3, 3, CV_64F);
+  for (int i = 0; i < 3; ++i) {
+    for (int j = 0; j < 3; ++j) {
+        cv_mat.at<double>(i, j) = eigen_mat(i, j);
+    }
+  }
+
+  // Use Rodrigues to convert rotation matrix to rotation vector
+  cv::Mat rot_vec;
+  cv::Rodrigues(cv_mat, rot_vec);
+
+  // Extract roll, pitch, yaw from rotation vector
+  roll  = rot_vec.at<double>(0);
+  pitch = rot_vec.at<double>(1);
+  yaw   = rot_vec.at<double>(2);
+}
 Eigen::Vector3d R2ypr(const Eigen::Matrix3d& R) {
   Eigen::Vector3d n = R.col(0);
   Eigen::Vector3d o = R.col(1);
@@ -60,20 +79,23 @@ int main() {
     Eigen::Matrix3d rotation = generateRandomRotationMatrix();
     gtsam::Rot3 R = gtsam::Rot3(rotation);
 
+    R.print();
     double roll, pitch, yaw;
 
     std::cout << "----------------------------------------" << std::endl;
     getRPYFromEigenMatrix3d(rotation, roll, pitch, yaw);
-    std::cout << "Roll: " << roll << ", Pitch: " << pitch << ", Yaw: " << yaw << std::endl;
+    std::cout << "[Eigen]  Roll: " << roll << ", Pitch: " << pitch << ", Yaw: " << yaw << std::endl;
     getRPYFromEigenMatrix3d(rotation, roll, pitch, yaw, "xyz");
-    std::cout << "Roll: " << roll << ", Pitch: " << pitch << ", Yaw: " << yaw << std::endl;
+    std::cout << "[Eigen]  Roll: " << roll << ", Pitch: " << pitch << ", Yaw: " << yaw << std::endl;
 
+    mat2rpy(rotation, roll, pitch, yaw);
+    std::cout << "[OpenCV] Roll: " << roll << ", Pitch: " << pitch << ", Yaw: " << yaw << std::endl;
     auto vec = R.ypr();
-    std::cout << "Roll: " << vec(2) << ", Pitch: " << vec(1) << ", Yaw: " << vec(0) << std::endl;
+    std::cout << "[GTSAM]  Roll: " << vec(2) << ", Pitch: " << vec(1) << ", Yaw: " << vec(0) << std::endl;
     auto vec2 = R.rpy();
-    std::cout << "Roll: " << vec2(0) << ", Pitch: " << vec2(1) << ", Yaw: " << vec2(2) << std::endl;
+    std::cout << "[GTSAM]  Roll: " << vec2(0) << ", Pitch: " << vec2(1) << ", Yaw: " << vec2(2) << std::endl;
     auto vec3 = R2ypr(rotation.matrix());
-    std::cout << "Roll: " << vec3(2) << ", Pitch: " << vec3(1) << ", Yaw: " << vec3(0) << std::endl;
+    std::cout << "[Ours]   Roll: " << vec3(2) << ", Pitch: " << vec3(1) << ", Yaw: " << vec3(0) << std::endl;
     std::cout << "----------------------------------------" << std::endl;
   }
   return 0;
