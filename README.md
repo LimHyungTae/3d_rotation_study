@@ -22,16 +22,16 @@ R: [
 
 When I generated a rotation matrix using the outputs of the library:
 
-### Eigen with `zyx` style
+### Eigen with `XYZ` style
 
 ![a](materials/rotation_eigen_xyz.png)
 
 
-### Eigen with `xyz` style
+### Eigen with `ZYX` style
 
 ![b](materials/rotation_eigen_zyx.png)
 
-### From `R2ypr` function
+### From `R2ypr` function (follow `ZYX` format)
 
 ![c](materials/rotation_ours_zyx.png)
 
