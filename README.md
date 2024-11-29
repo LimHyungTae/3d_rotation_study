@@ -121,4 +121,8 @@ When I generated a rotation matrix using the roll-pitch-yaw angles above:
 
 ![c](materials/rotation_ours_zyx.png)
 
-**Eigen** has larger numerical error! (0.0000025 vs 0.0000002)
+## Conclusion
+
+Dont' fxxking use Eigen's `eularAngle` function. 
+
+**Eigen** has a larger numerical error! (0.0000025 vs 0.0000002)
