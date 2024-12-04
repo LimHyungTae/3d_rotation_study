@@ -9,9 +9,9 @@ find_package(GTSAM REQUIRED)
 find_package(Eigen3 REQUIRED)
 find_package(OpenCV REQUIRED)
 
-# Add executable target
 add_executable(main main.cpp)
-
-# Link libraries
 target_link_libraries(main gtsam Eigen3::Eigen ${OpenCV_LIBS})
+
+add_executable(gtsam_ypr gtsam_ypr.cpp)
+target_link_libraries(gtsam_ypr gtsam Eigen3::Eigen)
 
